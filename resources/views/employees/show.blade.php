@@ -41,6 +41,18 @@
                                 <label class="block text-sm font-medium text-gray-500">Email</label>
                                 <p class="mt-1 text-sm text-gray-900">{{ $employee->user->email }}</p>
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Password Management</label>
+                                <dd class="mt-1">
+                                    <form action="{{ route('employees.reset-password', $employee) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" onclick="return confirm('Are you sure you want to reset the password?')"
+                                            class="inline-flex items-center px-3 py-1.5 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-600 focus:outline-none focus:border-yellow-700 focus:ring focus:ring-yellow-200 active:bg-yellow-600 disabled:opacity-25 transition">
+                                            Reset Password
+                                        </button>
+                                    </form>
+                                </dd>
+                            </div>
                         </div>
                     </div>
 

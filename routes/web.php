@@ -8,10 +8,15 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\Auth\SetPasswordController;
 
 Route::get('/', function () {
     return view('home');
 })->name('home');
+
+// Password setting routes (accessible without auth)
+Route::get('/password/set', [SetPasswordController::class, 'showSetPasswordForm'])->name('password.set.form');
+Route::post('/password/set', [SetPasswordController::class, 'setPassword'])->name('password.set');
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
@@ -35,10 +40,12 @@ Route::middleware('auth')->group(function () {
     Route::middleware(\App\Http\Middleware\AdminMiddleware::class)->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('employees', EmployeeController::class);
+        Route::post('/employees/{employee}/reset-password', [EmployeeController::class, 'resetPassword'])->name('employees.reset-password');
     });
     
     // Employee routes
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('/attendance/today', [AttendanceController::class, 'today'])->name('attendance.today');
     Route::post('/attendance/time-in', [AttendanceController::class, 'timeIn'])->name('attendance.timeIn');
     Route::post('/attendance/time-out', [AttendanceController::class, 'timeOut'])->name('attendance.timeOut');
     Route::get('/attendance/status', [AttendanceController::class, 'status'])->name('attendance.status');

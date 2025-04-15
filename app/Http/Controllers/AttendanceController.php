@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -12,15 +13,22 @@ class AttendanceController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $now = Carbon::now();
+        $employee = Employee::where('user_id', $user->id)->first();
+        
+        if (!$employee) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Your employee profile is not set up. Please contact HR to complete your employee profile setup.');
+        }
 
+        $now = Carbon::now('Asia/Manila');
+        
         // Get today's attendance
-        $todayAttendance = Attendance::where('user_id', $user->id)
+        $todayAttendance = Attendance::where('employee_id', $employee->id)
             ->whereDate('time_in', $now->toDateString())
             ->first();
 
         // Get attendance history
-        $attendances = Attendance::where('user_id', $user->id)
+        $attendances = Attendance::where('employee_id', $employee->id)
             ->orderBy('time_in', 'desc')
             ->take(10)
             ->get();
@@ -31,66 +39,129 @@ class AttendanceController extends Controller
     public function timeIn()
     {
         $user = Auth::user();
-        $now = Carbon::now();
+        $employee = Employee::where('user_id', $user->id)->first();
+        
+        if (!$employee) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your employee profile is not set up. Please contact HR to complete your employee profile setup.'
+            ], 403);
+        }
 
+        $now = Carbon::now('Asia/Manila');
+        
         // Check if user already timed in today
-        $existingAttendance = Attendance::where('user_id', $user->id)
+        $existingAttendance = Attendance::where('employee_id', $employee->id)
             ->whereDate('time_in', $now->toDateString())
             ->first();
 
         if ($existingAttendance) {
-            return redirect()->back()->with('error', 'You have already timed in today.');
+            return response()->json([
+                'success' => false,
+                'message' => 'You have already timed in today.'
+            ]);
         }
 
-        // Create new attendance record
-        $attendance = Attendance::create([
-            'user_id' => $user->id,
-            'time_in' => $now,
-            'status' => $now->hour >= 9 ? 'late' : 'present', // Consider late if after 9 AM
-        ]);
+        // Determine if late (after 9:00 AM)
+        $isLate = $now->hour >= 9 && $now->minute > 0;
 
-        return redirect()->back()->with('success', 'Time in recorded successfully.');
+        try {
+            // Create new attendance record
+            $attendance = new Attendance();
+            $attendance->employee_id = $employee->id;
+            $attendance->time_in = $now;
+            $attendance->status = $isLate ? 'late' : 'present';
+            $attendance->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Time in recorded successfully.',
+                'data' => [
+                    'time_in' => $attendance->time_in->format('h:i A'),
+                    'status' => $attendance->status,
+                    'date' => $attendance->time_in->format('Y-m-d')
+                ]
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Time in error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to record time in. Please try again.'
+            ], 500);
+        }
     }
 
     public function timeOut()
     {
         $user = Auth::user();
-        $now = Carbon::now();
+        $employee = Employee::where('user_id', $user->id)->first();
+        
+        if (!$employee) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your employee profile is not set up. Please contact HR to complete your employee profile setup.'
+            ], 403);
+        }
 
+        $now = Carbon::now('Asia/Manila');
+        
         // Find today's attendance record
-        $attendance = Attendance::where('user_id', $user->id)
+        $attendance = Attendance::where('employee_id', $employee->id)
             ->whereDate('time_in', $now->toDateString())
             ->whereNull('time_out')
             ->first();
 
         if (!$attendance) {
-            return redirect()->back()->with('error', 'No active attendance record found. Please time in first.');
+            return response()->json([
+                'success' => false,
+                'message' => 'No active attendance record found. Please time in first.'
+            ]);
         }
 
-        if ($attendance->time_out) {
-            return redirect()->back()->with('error', 'You have already timed out today.');
+        try {
+            // Update the attendance record with time out
+            $attendance->time_out = $now;
+            $attendance->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Time out recorded successfully.',
+                'data' => [
+                    'time_out' => $attendance->time_out->format('h:i A'),
+                    'status' => $attendance->status,
+                    'date' => $attendance->time_in->format('Y-m-d')
+                ]
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Time out error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to record time out. Please try again.'
+            ], 500);
         }
-
-        // Update the attendance record with time out
-        $attendance->update([
-            'time_out' => $now,
-        ]);
-
-        return redirect()->back()->with('success', 'Time out recorded successfully.');
     }
 
     public function status()
     {
         $user = Auth::user();
-        $now = Carbon::now();
+        $employee = Employee::where('user_id', $user->id)->first();
+        
+        if (!$employee) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your employee profile is not set up. Please contact HR to complete your employee profile setup.'
+            ], 403);
+        }
 
+        $now = Carbon::now('Asia/Manila');
+        
         // Get today's attendance
-        $todayAttendance = Attendance::where('user_id', $user->id)
+        $todayAttendance = Attendance::where('employee_id', $employee->id)
             ->whereDate('time_in', $now->toDateString())
             ->first();
 
         // Get recent attendance history
-        $attendances = Attendance::where('user_id', $user->id)
+        $attendances = Attendance::where('employee_id', $employee->id)
             ->latest()
             ->take(10)
             ->get();
@@ -101,11 +172,22 @@ class AttendanceController extends Controller
             'status' => $todayAttendance ? $todayAttendance->status : null,
             'attendances' => $attendances->map(function ($attendance) {
                 return [
-                    'time_in' => $attendance->time_in,
-                    'time_out' => $attendance->time_out,
+                    'date' => $attendance->time_in->format('Y-m-d'),
+                    'time_in' => $attendance->time_in->format('h:i A'),
+                    'time_out' => $attendance->time_out ? $attendance->time_out->format('h:i A') : null,
                     'status' => $attendance->status
                 ];
             })
         ]);
+    }
+
+    public function today()
+    {
+        $today = Carbon::now('Asia/Manila')->format('Y-m-d');
+        $employees = Employee::with(['user', 'attendances' => function($query) use ($today) {
+            $query->whereDate('time_in', $today);
+        }])->get();
+
+        return view('attendance.today', compact('employees'));
     }
 } 

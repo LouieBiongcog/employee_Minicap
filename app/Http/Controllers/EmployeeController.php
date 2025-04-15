@@ -35,10 +35,14 @@ class EmployeeController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', Password::defaults()],
+            'password' => ['required', 'confirmed', Password::defaults()],
             'employee_id' => ['required', 'string', 'max:255', 'unique:employees'],
             'department' => ['required', 'string', 'max:255'],
             'position' => ['required', 'string', 'max:255'],
+            'hire_date' => ['required', 'date'],
+            'salary' => ['required', 'numeric', 'min:0'],
+            'phone' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string', 'max:255'],
             'status' => ['required', 'string', 'in:active,on_leave,inactive'],
         ]);
 
@@ -53,6 +57,10 @@ class EmployeeController extends Controller
             'employee_id' => $request->employee_id,
             'department' => $request->department,
             'position' => $request->position,
+            'hire_date' => $request->hire_date,
+            'salary' => $request->salary,
+            'phone' => $request->phone,
+            'address' => $request->address,
             'status' => $request->status,
         ]);
 
@@ -113,6 +121,23 @@ class EmployeeController extends Controller
 
         return redirect()->route('employees.index')
             ->with('success', 'Employee updated successfully.');
+    }
+
+    /**
+     * Reset user password.
+     */
+    public function resetPassword(Employee $employee)
+    {
+        // Generate a random password
+        $newPassword = substr(str_shuffle('abcdefghjklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ234567890!$%^&!$%^&'), 0, 10);
+
+        // Update user password
+        $employee->user->update([
+            'password' => Hash::make($newPassword)
+        ]);
+
+        return redirect()->route('employees.show', $employee)
+            ->with('success', 'Password has been reset. Please inform the employee to set a new password at /password/set');
     }
 
     /**
