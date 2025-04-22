@@ -9,6 +9,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\SetPasswordController;
+use App\Http\Controllers\ReportsController;
 
 Route::get('/', function () {
     return view('home');
@@ -54,6 +55,15 @@ Route::middleware('auth')->group(function () {
 // Admin Routes
 Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/attendance', [AdminController::class, 'attendance'])->name('admin.attendance');
+    Route::get('/attendance/today', [AdminController::class, 'todayAttendance'])->name('admin.attendance.today');
+    Route::get('/attendance/{employee}', [AdminController::class, 'employeeAttendance'])->name('admin.attendance.employee');
+});
+
+// Report Routes
+Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+    Route::get('/reports', [ReportsController::class, 'index'])->name('reports.index');
+    Route::post('/reports/generate', [ReportsController::class, 'generate'])->name('reports.generate');
 });
 
 // Route::get('/show-time', function () {
