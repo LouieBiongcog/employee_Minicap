@@ -107,14 +107,14 @@
                                 @enderror
                             </div>
 
-                            <div>
+                            {{-- <div>
                                 <label for="salary" class="block text-sm font-medium text-gray-700">Salary</label>
                                 <input type="number" name="salary" id="salary" value="{{ old('salary') }}" required
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                                 @error('salary')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <div>
                                 <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
@@ -127,7 +127,7 @@
 
                             <div>
                                 <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
-                                <textarea name="address" id="address" rows="3"
+                                <textarea name="address" id="address" rows="2"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">{{ old('address') }}</textarea>
                                 @error('address')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

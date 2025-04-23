@@ -22,11 +22,13 @@
                 <div class="flex justify-between h-16">
                     <div class="flex">
                         <!-- Logo -->
-                        <div class="shrink-0 flex items-center">
-                            <a href="{{ url('/') }}" class="text-xl font-bold text-gray-800">
-                               TIMELOG
+                        <div class="shrink-0 flex items-center space-x-2">
+                            <a href="{{ url('/') }}" class="flex items-center space-x-2 text-2xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+                                <i class="fa-solid fa-clock text-indigo-600"></i>
+                                <span>TIMELOG</span>
                             </a>
                         </div>
+                        
 
                         <!-- Navigation Links -->
                         <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
