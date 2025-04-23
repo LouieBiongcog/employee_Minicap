@@ -34,13 +34,18 @@
                                 {{ __('Home') }}
                             </a>
                             @auth
-                            <a href="{{ route('attendance.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
-                                <i class="fas fa-clock mr-1"></i>
-                                {{ __('Attendance') }}
-                            </a>
-                            <a href="{{ route('dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
-                                {{ __('Dashboard') }}
-                            </a>
+                                @if(auth()->user()->role === 'employee')
+                                    <a href="{{ route('attendance.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
+                                        <i class="fas fa-clock mr-1"></i>
+                                        {{ __('Attendance') }}
+                                    </a>
+                                @elseif(auth()->user()->role === 'admin')
+                                    <a href="{{ route('dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
+                                        {{ __('Dashboard') }}
+                                    </a>
+                                @endif
+                                {{-- <div class="text-red-600">Role: {{ auth()->user()->role }}</div> --}}
+                               
                             @endauth
                         </div>
                     </div>
@@ -53,9 +58,9 @@
                                     <a href="{{ route('login') }}" class="text-sm text-gray-700 hover:text-gray-900">Login</a>
                                 @endif
 
-                                @if (Route::has('register'))
+                                {{-- @if (Route::has('register'))
                                     <a href="{{ route('register') }}" class="text-sm text-gray-700 hover:text-gray-900">Register</a>
-                                @endif
+                                @endif --}}
                             </div>
                         @else
                             <div class="ml-3 relative" x-data="{ open: false }">
@@ -85,9 +90,9 @@
                     <!-- Hamburger -->
                     <div class="-mr-2 flex items-center sm:hidden">
                         <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            {{-- <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                 <path class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
+                            </svg> --}}
                         </button>
                     </div>
                 </div>
@@ -99,12 +104,20 @@
                     <a href="{{ url('/') }}" class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out">
                         {{ __('Home') }}
                     </a>
-                    <a href="{{ url('/about') }}" class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out">
-                        {{ __('About') }}
-                    </a>
-                    <a href="{{ url('/contact') }}" class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out">
-                        {{ __('Contact') }}
-                    </a>
+                    @auth
+                         @if(auth()->user()->role === 'employee')
+                            <a href="{{ route('attendance.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
+                                <i class="fas fa-clock mr-1"></i>
+                                    {{ __('Attendance') }}
+                            </a>
+                        @elseif(auth()->user()->role === 'admin')
+                            <a href="{{ route('dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
+                                <i class="fas fa-clock mr-1"></i>
+                                {{ __('Dashboard') }}
+                                </a>
+                            @endif
+                            {{-- <div class="text-red-600">Role: {{ auth()->user()->role }}</div> --}}   
+                    @endauth
                 </div>
 
                 <!-- Responsive Settings Options -->
@@ -115,9 +128,9 @@
                                 <a href="{{ route('login') }}" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">Login</a>
                             @endif
 
-                            @if (Route::has('register'))
+                            {{-- @if (Route::has('register'))
                                 <a href="{{ route('register') }}" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">Register</a>
-                            @endif
+                            @endif --}}
                         </div>
                     @else
                         <div class="px-4">

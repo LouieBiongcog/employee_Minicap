@@ -3,8 +3,16 @@
 @section('content')
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-lg rounded-xl">
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl"> 
             <div class="p-4">
+                <div class="mb-4">
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center text-gray-600 hover:text-gray-900">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        {{-- Back to Dashboard --}}
+                    </a>
+                </div>
                 <div class="flex justify-between items-center mb-8">
                     <div>
                         <h2 class="text-2xl font-bold text-gray-800">Employees</h2>
@@ -17,7 +25,6 @@
                         Add New Employee
                     </a>
                 </div>
-
                 @if(session('success'))
                     <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6 rounded-r-lg" role="alert">
                         <div class="flex">

@@ -45,22 +45,22 @@
                     {{ __('Login') }}
                 </button>
 
-                @if (Route::has('password.request'))
+                {{-- @if (Route::has('password.request'))
                     <a class="text-sm text-blue-600 hover:text-blue-800" href="{{ route('password.request') }}">
                         {{ __('Forgot Your Password?') }}
                     </a>
-                @endif
+                @endif --}}
             </div>
         </form>
 
-        <div class="mt-6 text-center">
+        {{-- <div class="mt-6 text-center">
             <p class="text-sm text-gray-600">
                 {{ __("Don't have an account?") }}
                 <a href="{{ route('register') }}" class="font-medium text-blue-600 hover:text-blue-800">
                     {{ __('Register') }}
                 </a>
             </p>
-        </div>
+        </div> --}}
     </div>
 </div>
 @endsection 

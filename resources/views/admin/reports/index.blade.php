@@ -4,7 +4,15 @@
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-2xl mx-auto">
         <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="mb-4">
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center text-gray-600 hover:text-gray-900">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </a>
+            </div>
             <h2 class="text-2xl font-bold mb-6">Generate Reports</h2>
+            
             
             <form action="{{ route('reports.generate') }}" method="POST" class="space-y-4">
                 @csrf
@@ -13,7 +21,7 @@
                     <label for="report_type" class="block text-sm font-medium text-gray-700">Report Type</label>
                     <select name="report_type" id="report_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         <option value="attendance">Attendance Report</option>
-                        <option value="employee">Employee Report</option>
+                        {{-- <option value="employee">Employee Report</option> --}}
                     </select>
                 </div>
 

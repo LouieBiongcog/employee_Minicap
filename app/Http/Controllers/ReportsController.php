@@ -51,12 +51,18 @@ class ReportsController extends Controller
             ->orderBy('date', 'desc')
             ->get();
 
-        $summary = [
-            'total_days' => $endDate->diffInDays($startDate) + 1,
-            'total_present' => $attendances->where('status', 'present')->count(),
-            'total_late' => $attendances->where('status', 'late')->count(),
-            'total_absent' => $attendances->count() - ($attendances->where('status', 'present')->count() + $attendances->where('status', 'late')->count()),
-        ];
+            $totalDays = $endDate->diffInDays($startDate) + 1;
+            $totalPresent = $attendances->where('status', 'present')->count();
+            $totalLate = $attendances->where('status', 'late')->count();
+            $totalAbsent = $totalDays - ($totalPresent + $totalLate);
+            
+            $summary = [
+                'total_days' => $totalDays,
+                'total_present' => $totalPresent,
+                'total_late' => $totalLate,
+                'total_absent' => $totalAbsent,
+            ];
+            
 
         return [
             'attendances' => $attendances,

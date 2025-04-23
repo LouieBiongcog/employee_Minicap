@@ -14,7 +14,7 @@ class EmployeeSeeder extends Seeder
         $departments = ['IT', 'HR', 'Finance', 'Marketing', 'Sales', 'Operations'];
         $positions = ['Manager', 'Senior', 'Junior', 'Associate', 'Director', 'Coordinator'];
         
-        for ($i = 1; $i <= 30; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             // Create user account for each employee
             $user = User::create([
                 'name' => "Employee $i",
